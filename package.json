@@ -18,8 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "deploy": "NODE_ENV=dev yarn build && serverless deploy",
-    "deploy:dev": "NODE_ENV=dev yarn build && serverless offline"
+    "deploy": "yarn build && NODE_ENV=dev serverless deploy",
+    "deploy:dev": "yarn build && NODE_ENV=dev serverless offline"
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.17.1",

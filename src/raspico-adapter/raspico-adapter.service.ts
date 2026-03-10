@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from 'src/config/config.service';
 import { mqtt, io, iot } from 'aws-iot-device-sdk-v2';
-import { envVars } from 'src/config';
 
 @Injectable()
 export class RaspicoAdapterService {
+    private readonly logger = new Logger(RaspicoAdapterService.name);
     constructor(private readonly config: ConfigService) {}
-    // TODO make this void and use a post with auth
+    // TODO use auth
     // TODO use store params to save the certs
     // TODO tests
-    async switch(): Promise<string>{
+    async activate(): Promise<void> {
         try {
+            //TODO change this
             const clientId = 'backend-server-id';
             const { 
                 endpoint, topic, message, key, cert, ca
@@ -35,9 +36,9 @@ export class RaspicoAdapterService {
             const connection = client.new_connection(clientConfig);
 
             // Connect to AWS IoT
-            console.log('Connecting to AWS IoT...');
+            this.logger.log('Connecting to AWS IoT...');
             await connection.connect();
-            console.log('Connected successfully!');
+            this.logger.log('Connected successfully!');
 
             await connection.publish(
                 topic!,
@@ -45,16 +46,13 @@ export class RaspicoAdapterService {
                 mqtt.QoS.AtLeastOnce
             );
 
-            console.log('Message published successfully!');
+            this.logger.log('Message published successfully!');
 
             // Disconnect
             await connection.disconnect();
-            console.log('Disconnected from AWS IoT');
-            return await 'success'
-
+            this.logger.log('Disconnected from AWS IoT');
         } catch (e) {
-            console.log('error', e)
-            return await 'failed'
+            throw new Error(e);
         }
     }
 }
